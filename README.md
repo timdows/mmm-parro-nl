@@ -7,6 +7,10 @@ stuurt nooit gebruikersnaam, wachtwoord of token naar de MagicMirror-frontend.
 
 ![](https://timdows.com/wp-content/uploads/2026/07/image-6-1536x1248.png)
 
+## Blog
+Op mijn blog heb ik hier wat meer over geschreven
+[https://timdows.com/blogs/parro-school-forum-software-on-my-magicmirror-instance/](https://timdows.com/blogs/parro-school-forum-software-on-my-magicmirror-instance/)
+
 ## Installeren
 
 Vereist: Node.js 22 of nieuwer; Node.js 24 LTS wordt aanbevolen.
