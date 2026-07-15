@@ -53,6 +53,26 @@ diagnosebestanden in `debug-output/`. Daarin wordt het wachtwoord nooit
 opgeslagen. Deel bij problemen vooral `debug-output/summary.json`; screenshots
 kunnen wel persoonlijke informatie bevatten.
 
+## Problemen op MagicMirror onderzoeken
+
+Voer in de modulemap uit:
+
+```bash
+npm run diagnose
+```
+
+Dit controleert zonder wachtwoord of token te tonen: Node-versie, modulemap,
+settings, lokaal archief, tokenvervaldatum, Playwright en een echte headless
+Chromium-start. Bekijk daarnaast bij PM2-installaties de modulelogs met:
+
+```bash
+pm2 logs MagicMirror --lines 150
+```
+
+Filter eventueel op alleen deze module met `grep MMM-Parro-NL`. Wanneer
+`node_helper` niet antwoordt, toont de module na 30 seconden een diagnosemelding
+in plaats van onbeperkt `Berichten laden…`.
+
 ## Instellingen
 
 De niet-geheime weergave-instellingen staan in MagicMirror `config.js`:

@@ -4,6 +4,7 @@ Module.register("MMM-Parro-NL", {
   defaults: {
     title: "Parro",
     maximumEntries: 5,
+    connectionTimeout: 30000,
     showGroup: true,
     showDate: true
   },
@@ -12,6 +13,13 @@ Module.register("MMM-Parro-NL", {
     this.messages = [];
     this.error = null;
     this.loaded = false;
+    this.connectionTimer = setTimeout(() => {
+      if (!this.loaded) {
+        this.error = "Geen antwoord van node_helper. Voer 'npm run diagnose' uit en controleer de MagicMirror-logs.";
+        this.loaded = true;
+        this.updateDom(500);
+      }
+    }, this.config.connectionTimeout);
     this.sendSocketNotification("PARRO_CONFIG", this.config);
   },
 
@@ -25,12 +33,14 @@ Module.register("MMM-Parro-NL", {
 
   socketNotificationReceived(notification, payload) {
     if (notification === "PARRO_MESSAGES") {
+      clearTimeout(this.connectionTimer);
       this.messages = payload;
       this.error = null;
       this.loaded = true;
       this.updateDom(500);
     }
     if (notification === "PARRO_ERROR") {
+      clearTimeout(this.connectionTimer);
       this.error = payload.message;
       this.loaded = true;
       Log.error(`[MMM-Parro-NL] ${payload.message}`);

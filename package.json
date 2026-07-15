@@ -7,6 +7,7 @@
   "scripts": {
     "debug": "node debug/server.js",
     "debug:mock": "node debug/server.js --mock",
+    "diagnose": "node debug/diagnose.js",
     "media:scan": "node debug/download-media.js --dry-run",
     "media:download": "node debug/download-media.js",
     "media:download:all": "node debug/download-media.js --all",

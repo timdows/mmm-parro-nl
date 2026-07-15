@@ -3,7 +3,6 @@
 const NodeHelper = require("node_helper");
 const path = require("node:path");
 const { loadSettings } = require("./lib/settings");
-const { ParroClient } = require("./lib/parro-client");
 const { MessageStore } = require("./lib/message-store");
 
 module.exports = NodeHelper.create({
@@ -18,6 +17,7 @@ module.exports = NodeHelper.create({
 
   socketNotificationReceived(notification, config) {
     if (notification !== "PARRO_CONFIG") return;
+    console.log("[MMM-Parro-NL] Configuratie ontvangen van MagicMirror");
     this.config = config;
     if (this.timer) clearInterval(this.timer);
     try {
@@ -30,6 +30,7 @@ module.exports = NodeHelper.create({
         Math.max(60000, Number(this.settings.syncIntervalMs) || 60 * 60 * 1000)
       );
     } catch (error) {
+      console.error(`[MMM-Parro-NL] Initialisatie mislukt: ${error.stack || error.message}`);
       this.sendSocketNotification("PARRO_ERROR", { message: error.message });
     }
   },
@@ -39,7 +40,9 @@ module.exports = NodeHelper.create({
   },
 
   sendStoredMessages() {
-    this.sendSocketNotification("PARRO_MESSAGES", this.store.latest(this.displayCount()));
+    const messages = this.store.latest(this.displayCount());
+    console.log(`[MMM-Parro-NL] ${messages.length} lokaal opgeslagen bericht(en) naar frontend gestuurd`);
+    this.sendSocketNotification("PARRO_MESSAGES", messages);
   },
 
   async syncMessages() {
@@ -47,9 +50,14 @@ module.exports = NodeHelper.create({
     this.running = true;
     try {
       const moduleDirectory = path.resolve(__dirname);
+      // Lazy require: als Playwright/Node incompatibel is, blijft node_helper
+      // actief en verschijnt de echte fout in MagicMirror in plaats van eeuwig laden.
+      const { ParroClient } = require("./lib/parro-client");
+      console.log("[MMM-Parro-NL] Parro-synchronisatie gestart");
       const client = new ParroClient(this.settings, moduleDirectory);
       const messages = await client.getMessages(Number.MAX_SAFE_INTEGER);
       this.store.merge(messages);
+      console.log(`[MMM-Parro-NL] Synchronisatie gereed; ${messages.length} serverbericht(en) verwerkt`);
       this.sendStoredMessages();
     } catch (error) {
       console.error(`[MMM-Parro-NL] ${error.stack || error.message}`);
