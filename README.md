@@ -83,5 +83,32 @@ cache vernieuwd. Zowel `.cache/` als het archief staan in `.gitignore`; behandel
 beide desondanks als persoonlijke data. Zet `headless` tijdelijk op `false` als de
 login handmatige actie of tweestapsverificatie vraagt.
 
+## Media lokaal downloaden
+
+Dit is uitsluitend een handmatige laptop/debugfunctie en wordt nooit door
+MagicMirror of de uurlijkse berichtsync gestart. Eerst bekijken hoeveel foto's
+beschikbaar zijn en hoeveel ruimte ze ongeveer innemen:
+
+```bash
+npm run media:scan
+```
+
+Alle foto's downloaden:
+
+```bash
+npm run media:download
+```
+
+Foto's, video's en documenten downloaden:
+
+```bash
+npm run media:download:all
+```
+
+Bestanden komen standaard per groep in `downloads/parro-media`. Pas dit aan met
+`mediaDownloadDirectory` in `settings.json`. Een lokaal manifest zorgt ervoor dat
+reeds gedownloade bestanden bij een volgende run worden overgeslagen. De gehele
+map `downloads/` staat in `.gitignore`.
+
 > Parro heeft geen gedocumenteerde publieke API voor deze module. Een wijziging
 > aan de website kan daarom aanpassing van de extractor vereisen.
