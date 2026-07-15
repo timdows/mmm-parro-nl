@@ -7,6 +7,8 @@ stuurt nooit gebruikersnaam, wachtwoord of token naar de MagicMirror-frontend.
 
 ## Installeren
 
+Vereist: Node.js 22 of nieuwer; Node.js 24 LTS wordt aanbevolen.
+
 ```bash
 cd ~/MagicMirror/modules
 git clone <repository-url> MMM-Parro-NL
