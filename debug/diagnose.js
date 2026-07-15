@@ -73,7 +73,13 @@ function warning(label, detail) {
       check("Chromium starten", true, "headless start/stop geslaagd");
     }
   } catch (error) {
-    check("Playwright/Chromium", false, error.message.split("\n")[0]);
+    const usefulLines = String(error.message || error)
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line && !line.startsWith("Call log:"))
+      .slice(0, 10)
+      .join(" | ");
+    check("Playwright/Chromium", false, usefulLines);
   }
 
   console.log(failures ? `\nDiagnose afgerond met ${failures} fout(en).` : "\nDiagnose volledig geslaagd.");

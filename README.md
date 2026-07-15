@@ -21,6 +21,43 @@ cp settings.example.json settings.json
 Vul daarna `username` en `password` in `settings.json` in. Dit bestand en de
 opgeslagen browsersessie staan in `.gitignore`.
 
+### Eenmalige installatie in Docker Compose
+
+Bij een Docker-installatie moeten de Linux-bibliotheken voor Chromium eenmaal
+als root in de container worden geïnstalleerd. Bekijk eerst de beschikbare
+servicenamen:
+
+```bash
+docker compose config --services
+```
+
+Vervang `magicmirror` in de onderstaande commando's door de servicenaam uit jouw
+Compose-bestand. Installeer eerst de Node-pakketten en Chromium als de normale
+containergebruiker:
+
+```bash
+docker compose exec magicmirror bash -lc \
+  'cd /opt/magic_mirror/modules/MMM-Parro-NL && npm ci && npx playwright install chromium'
+```
+
+Installeer daarna eenmalig de vereiste systeembibliotheken als root:
+
+```bash
+docker compose exec --user root magicmirror bash -lc \
+  'mkdir -p /var/lib/apt/lists/partial && apt-get update && cd /opt/magic_mirror/modules/MMM-Parro-NL && npx playwright install-deps chromium'
+```
+
+Controleer ten slotte als de normale containergebruiker of alles werkt:
+
+```bash
+docker compose exec magicmirror bash -lc \
+  'cd /opt/magic_mirror/modules/MMM-Parro-NL && npm run diagnose'
+```
+
+Dit is eenmalig per aangemaakte container. Als Docker Compose de container later
+opnieuw aanmaakt, moeten de systeembibliotheken opnieuw worden geïnstalleerd of
+permanent in een eigen Docker-image worden opgenomen.
+
 Voeg de module toe aan `config/config.js` van MagicMirror:
 
 ```js
