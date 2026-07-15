@@ -17,14 +17,20 @@ fetch("/api/messages")
     status.remove();
     messages.forEach((message) => {
       const item = document.createElement("li");
-      const title = document.createElement("h2");
+      const heading = document.createElement("div");
+      heading.className = "message-heading";
+      const title = document.createElement("span");
+      title.className = "message-title";
       title.textContent = message.title || message.author || "Parro-bericht";
-      const meta = document.createElement("p");
+      const meta = document.createElement("span");
       meta.className = "meta";
-      meta.textContent = [message.group, message.date && formatDate(message.date)].filter(Boolean).join(" · ");
+      const metaParts = [message.group, message.date && formatDate(message.date)].filter(Boolean);
+      meta.textContent = metaParts.length ? ` · ${metaParts.join(" · ")}` : "";
+      heading.append(title, meta);
       const body = document.createElement("p");
+      body.className = "message-body";
       body.textContent = message.body;
-      item.append(title, meta, body);
+      item.append(heading, body);
       list.append(item);
     });
   })

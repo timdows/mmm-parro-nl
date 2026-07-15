@@ -77,22 +77,25 @@ Module.register("MMM-Parro-NL", {
       item.className = "parro-message";
 
       const heading = document.createElement("div");
-      heading.className = "parro-title bright";
-      heading.textContent = message.title || message.author || "Parro-bericht";
-      item.appendChild(heading);
+      heading.className = "parro-heading";
+      const title = document.createElement("span");
+      title.className = "parro-title bright";
+      title.textContent = message.title || message.author || "Parro-bericht";
+      heading.appendChild(title);
 
       const metaParts = [];
       if (this.config.showGroup && message.group) metaParts.push(message.group);
       if (this.config.showDate && message.date) metaParts.push(this.formatDate(message.date));
       if (metaParts.length) {
-        const meta = document.createElement("div");
-        meta.className = "parro-meta dimmed xsmall";
-        meta.textContent = metaParts.join(" · ");
-        item.appendChild(meta);
+        const meta = document.createElement("span");
+        meta.className = "parro-meta dimmed";
+        meta.textContent = ` · ${metaParts.join(" · ")}`;
+        heading.appendChild(meta);
       }
+      item.appendChild(heading);
 
       const body = document.createElement("div");
-      body.className = "parro-body light small";
+      body.className = "parro-body light";
       body.textContent = message.body || "";
       item.appendChild(body);
       list.appendChild(item);
