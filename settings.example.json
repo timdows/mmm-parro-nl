@@ -1,0 +1,12 @@
+{
+  "username": "jouw-gebruikersnaam",
+  "password": "jouw-wachtwoord",
+  "headless": true,
+  "loginTimeoutMs": 60000,
+  "sessionFile": ".cache/parro-session.json",
+  "authFile": ".cache/parro-auth.json",
+  "debugOutputDirectory": "debug-output",
+  "archiveFile": "data/messages.json",
+  "syncIntervalMs": 3600000,
+  "maximumEntries": 5
+}

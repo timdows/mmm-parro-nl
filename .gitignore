@@ -1,0 +1,7 @@
+node_modules/
+settings.json
+.cache/
+debug-output/
+data/messages.json
+data/messages.json.tmp
+npm-debug.log*

@@ -1,0 +1,8 @@
+.MMM-Parro-NL .parro-wrapper { max-width: 420px; }
+.MMM-Parro-NL .parro-list { list-style: none; margin: 0; padding: 0; }
+.MMM-Parro-NL .parro-message { border-bottom: 1px solid rgba(255, 255, 255, 0.16); padding: 9px 0; }
+.MMM-Parro-NL .parro-message:last-child { border-bottom: 0; }
+.MMM-Parro-NL .parro-title { line-height: 1.25; }
+.MMM-Parro-NL .parro-meta { margin: 2px 0 3px; }
+.MMM-Parro-NL .parro-body { display: -webkit-box; line-height: 1.35; overflow: hidden; white-space: pre-line; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.MMM-Parro-NL .parro-error { color: #ff8d8d; }
