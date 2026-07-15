@@ -3,6 +3,8 @@
 Module.register("MMM-Parro-NL", {
   defaults: {
     title: "Parro",
+    displayMode: "todayAndLatest",
+    timeZone: "Europe/Amsterdam",
     maximumEntries: 5,
     connectionTimeout: 30000,
     showGroup: true,
@@ -70,7 +72,7 @@ Module.register("MMM-Parro-NL", {
 
     const list = document.createElement("ul");
     list.className = "parro-list";
-    this.messages.slice(0, this.config.maximumEntries).forEach((message) => {
+    this.messages.forEach((message) => {
       const item = document.createElement("li");
       item.className = "parro-message";
 

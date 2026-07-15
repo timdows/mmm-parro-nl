@@ -66,6 +66,8 @@ Voeg de module toe aan `config/config.js` van MagicMirror:
   position: "top_right",
   config: {
     title: "Parro",
+    displayMode: "todayAndLatest",
+    timeZone: "Europe/Amsterdam",
     maximumEntries: 5,
   }
 }
@@ -117,7 +119,9 @@ De niet-geheime weergave-instellingen staan in MagicMirror `config.js`:
 | Optie | Standaard | Betekenis |
 | --- | --- | --- |
 | `title` | `Parro` | Kop boven de berichten |
-| `maximumEntries` | `5` | Aantal getoonde berichten: `3` of `5` |
+| `displayMode` | `todayAndLatest` | Alle berichten van vandaag; anders altijd het nieuwste bericht |
+| `timeZone` | `Europe/Amsterdam` | Tijdzone waarmee wordt bepaald wat vandaag is |
+| `maximumEntries` | `5` | In modus `latest`: aantal getoonde berichten, `3` of `5` |
 | `showGroup` | `true` | Groepsnaam tonen |
 | `showDate` | `true` | Datum tonen |
 

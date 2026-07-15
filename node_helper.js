@@ -4,6 +4,7 @@ const NodeHelper = require("node_helper");
 const path = require("node:path");
 const { loadSettings } = require("./lib/settings");
 const { MessageStore } = require("./lib/message-store");
+const { selectMessages } = require("./lib/message-selection");
 
 module.exports = NodeHelper.create({
   start() {
@@ -40,7 +41,11 @@ module.exports = NodeHelper.create({
   },
 
   sendStoredMessages() {
-    const messages = this.store.latest(this.displayCount());
+    const messages = selectMessages(this.store.load(), {
+      displayMode: this.config.displayMode,
+      maximumEntries: this.displayCount(),
+      timeZone: this.config.timeZone
+    });
     console.log(`[MMM-Parro-NL] ${messages.length} lokaal opgeslagen bericht(en) naar frontend gestuurd`);
     this.sendSocketNotification("PARRO_MESSAGES", messages);
   },
