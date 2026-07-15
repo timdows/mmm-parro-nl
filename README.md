@@ -5,6 +5,8 @@ toont. De module logt via een lokale Chromium-browser in op
 [Parro](https://talk.parro.com), bewaart de sessie en bearer-token lokaal en
 stuurt nooit gebruikersnaam, wachtwoord of token naar de MagicMirror-frontend.
 
+![](https://timdows.com/wp-content/uploads/2026/07/image-6-1536x1248.png)
+
 ## Installeren
 
 Vereist: Node.js 22 of nieuwer; Node.js 24 LTS wordt aanbevolen.
