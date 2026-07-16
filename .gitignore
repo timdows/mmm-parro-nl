@@ -4,5 +4,7 @@ settings.json
 debug-output/
 data/messages.json
 data/messages.json.tmp
+data/lastSynced.json
+data/lastSynced.json.tmp
 downloads/
 npm-debug.log*
