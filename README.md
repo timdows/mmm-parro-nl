@@ -98,6 +98,9 @@ diagnosebestanden in `debug-output/`. Daarin wordt het wachtwoord nooit
 opgeslagen. Deel bij problemen vooral `debug-output/summary.json`; screenshots
 kunnen wel persoonlijke informatie bevatten.
 
+De debugpagina toont ook de statusregels `Al x dagen geen nieuwe berichten`
+en `Laatst succesvol gesynchroniseerd: ...` op basis van dezelfde lokale data.
+
 ## Problemen op MagicMirror onderzoeken
 
 Voer in de modulemap uit:
@@ -130,12 +133,15 @@ De niet-geheime weergave-instellingen staan in MagicMirror `config.js`:
 | `maximumEntries` | `5` | In modus `latest`: aantal getoonde berichten, `3` of `5` |
 | `showGroup` | `true` | Groepsnaam tonen |
 | `showDate` | `true` | Datum tonen |
+| `staleAfterDays` | `3` | Toon vanaf dit aantal dagen de melding `Al x dagen geen nieuwe berichten` |
+| `showLastSynced` | `true` | Toon onder de lijst wanneer voor het laatst succesvol is gesynchroniseerd |
 
 Browser-, account- en synchronisatie-instellingen staan in `settings.json`:
 
 | Optie | Standaard | Betekenis |
 | --- | --- | --- |
 | `archiveFile` | `data/messages.json` | Lokaal, oplopend berichtenarchief |
+| `lastSyncedFile` | `data/lastSynced.json` | Tijdstip van laatste succesvolle synchronisatie |
 | `authFile` | `.cache/parro-auth.json` | Lokale bearer-token-cache |
 | `syncIntervalMs` | `3600000` | Parro ieder uur synchroniseren |
 | `maximumEntries` | `5` | `3` of `5` berichten in de debugpagina |

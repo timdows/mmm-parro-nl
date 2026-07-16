@@ -13,3 +13,5 @@ li .meta { color: #829090; font-size: 11px; }
 li .message-body { color: #c7cece; font-size: 13px; line-height: 1.22; margin: 3px 0 0; overflow-wrap: anywhere; text-align: left; white-space: pre-line; }
 #status { color: #829090; }
 #status.error { background: #3b171b; border: 1px solid #8a3038; border-radius: 8px; color: #ffb1b8; padding: 12px; }
+#sync-status { color: #829090; margin-top: 10px; }
+.sync-status-line { margin: 0; line-height: 1.3; }

@@ -7,3 +7,5 @@
 .MMM-Parro-NL .parro-meta { font-size: 11px; }
 .MMM-Parro-NL .parro-body { font-size: 13px; line-height: 1.22; margin-top: 2px; overflow-wrap: anywhere; text-align: left; white-space: pre-line; }
 .MMM-Parro-NL .parro-error { color: #ff8d8d; }
+.MMM-Parro-NL .parro-status { margin-top: 8px; }
+.MMM-Parro-NL .parro-status-line { line-height: 1.25; }

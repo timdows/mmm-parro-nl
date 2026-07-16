@@ -4,6 +4,7 @@ const NodeHelper = require("node_helper");
 const path = require("node:path");
 const { loadSettings } = require("./lib/settings");
 const { MessageStore } = require("./lib/message-store");
+const { LastSyncedStore } = require("./lib/last-synced-store");
 const { selectMessages } = require("./lib/message-selection");
 
 module.exports = NodeHelper.create({
@@ -24,6 +25,8 @@ module.exports = NodeHelper.create({
     try {
       this.settings = loadSettings(path.resolve(__dirname));
       this.store = new MessageStore(path.resolve(__dirname, this.settings.archiveFile));
+      this.lastSyncedStore = new LastSyncedStore(path.resolve(__dirname, this.settings.lastSyncedFile));
+      this.lastSyncedAt = this.lastSyncedStore.load();
       this.sendStoredMessages();
       this.syncMessages();
       this.timer = setInterval(
@@ -47,7 +50,10 @@ module.exports = NodeHelper.create({
       timeZone: this.config.timeZone
     });
     console.log(`[MMM-Parro-NL] ${messages.length} lokaal opgeslagen bericht(en) naar frontend gestuurd`);
-    this.sendSocketNotification("PARRO_MESSAGES", messages);
+    this.sendSocketNotification("PARRO_MESSAGES", {
+      messages,
+      lastSyncedAt: this.lastSyncedAt
+    });
   },
 
   async syncMessages() {
@@ -62,6 +68,8 @@ module.exports = NodeHelper.create({
       const client = new ParroClient(this.settings, moduleDirectory);
       const messages = await client.getMessages(Number.MAX_SAFE_INTEGER);
       this.store.merge(messages);
+      this.lastSyncedAt = new Date().toISOString();
+      this.lastSyncedStore.save(this.lastSyncedAt);
       console.log(`[MMM-Parro-NL] Synchronisatie gereed; ${messages.length} serverbericht(en) verwerkt`);
       this.sendStoredMessages();
     } catch (error) {

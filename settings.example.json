@@ -7,7 +7,9 @@
   "authFile": ".cache/parro-auth.json",
   "debugOutputDirectory": "debug-output",
   "archiveFile": "data/messages.json",
+  "lastSyncedFile": "data/lastSynced.json",
   "mediaDownloadDirectory": "downloads/parro-media",
   "syncIntervalMs": 3600000,
-  "maximumEntries": 5
+  "maximumEntries": 5,
+  "staleAfterDays": 3
 }

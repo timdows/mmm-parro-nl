@@ -8,11 +8,14 @@ Module.register("MMM-Parro-NL", {
     maximumEntries: 5,
     connectionTimeout: 30000,
     showGroup: true,
-    showDate: true
+    showDate: true,
+    staleAfterDays: 3,
+    showLastSynced: true
   },
 
   start() {
     this.messages = [];
+    this.lastSyncedAt = null;
     this.error = null;
     this.loaded = false;
     this.connectionTimer = setTimeout(() => {
@@ -36,7 +39,13 @@ Module.register("MMM-Parro-NL", {
   socketNotificationReceived(notification, payload) {
     if (notification === "PARRO_MESSAGES") {
       clearTimeout(this.connectionTimer);
-      this.messages = payload;
+      if (Array.isArray(payload)) {
+        this.messages = payload;
+        this.lastSyncedAt = null;
+      } else {
+        this.messages = Array.isArray(payload.messages) ? payload.messages : [];
+        this.lastSyncedAt = payload.lastSyncedAt || null;
+      }
       this.error = null;
       this.loaded = true;
       this.updateDom(500);
@@ -65,8 +74,12 @@ Module.register("MMM-Parro-NL", {
       return wrapper;
     }
     if (!this.messages.length) {
-      wrapper.className += " dimmed light small";
-      wrapper.textContent = "Geen berichten gevonden";
+      const emptyState = document.createElement("div");
+      emptyState.className = "dimmed light small";
+      emptyState.textContent = "Geen berichten gevonden";
+      wrapper.appendChild(emptyState);
+      const status = this.buildStatus();
+      if (status) wrapper.appendChild(status);
       return wrapper;
     }
 
@@ -101,7 +114,62 @@ Module.register("MMM-Parro-NL", {
       list.appendChild(item);
     });
     wrapper.appendChild(list);
+
+    const status = this.buildStatus();
+    if (status) wrapper.appendChild(status);
     return wrapper;
+  },
+
+  buildStatus() {
+    const lines = [];
+    const latestMessageDate = this.messages[0] && this.messages[0].date;
+    const staleAfterDays = Number(this.config.staleAfterDays);
+    if (Number.isFinite(staleAfterDays) && staleAfterDays >= 0) {
+      const daysWithoutNewMessages = this.daysSince(latestMessageDate);
+      if (daysWithoutNewMessages !== null && daysWithoutNewMessages >= staleAfterDays) {
+        lines.push(`Al ${daysWithoutNewMessages} dagen geen nieuwe berichten`);
+      }
+    }
+
+    if (this.config.showLastSynced) {
+      if (this.lastSyncedAt) {
+        lines.push(`Laatst succesvol gesynchroniseerd: ${this.formatDateTime(this.lastSyncedAt)}`);
+      } else {
+        lines.push("Nog niet succesvol gesynchroniseerd");
+      }
+    }
+
+    if (!lines.length) return null;
+    const status = document.createElement("div");
+    status.className = "parro-status dimmed small";
+    lines.forEach((line) => {
+      const lineElement = document.createElement("div");
+      lineElement.className = "parro-status-line";
+      lineElement.textContent = line;
+      status.appendChild(lineElement);
+    });
+    return status;
+  },
+
+  daysSince(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    const differenceMs = Date.now() - date.getTime();
+    if (differenceMs < 0) return 0;
+    return Math.floor(differenceMs / (24 * 60 * 60 * 1000));
+  },
+
+  formatDateTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat("nl-NL", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(date);
   },
 
   formatDate(value) {

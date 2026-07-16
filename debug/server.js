@@ -6,6 +6,7 @@ const path = require("node:path");
 const { loadSettings } = require("../lib/settings");
 const { ParroClient } = require("../lib/parro-client");
 const { MessageStore } = require("../lib/message-store");
+const { LastSyncedStore } = require("../lib/last-synced-store");
 
 const moduleDirectory = path.resolve(__dirname, "..");
 const mock = process.argv.includes("--mock");
@@ -18,6 +19,8 @@ const mockMessages = [
 
 let settings;
 let store;
+let lastSyncedStore;
+let lastSyncedAt = null;
 let setupError;
 let inFlight;
 
@@ -25,6 +28,8 @@ if (!mock) {
   try {
     settings = loadSettings(moduleDirectory);
     store = new MessageStore(path.resolve(moduleDirectory, settings.archiveFile));
+    lastSyncedStore = new LastSyncedStore(path.resolve(moduleDirectory, settings.lastSyncedFile));
+    lastSyncedAt = lastSyncedStore.load();
   } catch (error) {
     setupError = error;
   }
@@ -35,7 +40,10 @@ async function syncMessages() {
   if (!inFlight) {
     inFlight = (async () => {
       const client = new ParroClient(settings, moduleDirectory);
-      return store.merge(await client.getMessages(Number.MAX_SAFE_INTEGER));
+      const merged = store.merge(await client.getMessages(Number.MAX_SAFE_INTEGER));
+      lastSyncedAt = new Date().toISOString();
+      lastSyncedStore.save(lastSyncedAt);
+      return merged;
     })().finally(() => { inFlight = null; });
   }
   return inFlight;
@@ -57,7 +65,12 @@ const server = http.createServer(async (request, response) => {
   if (pathname === "/api/messages") {
     response.setHeader("Content-Type", "application/json; charset=utf-8");
     try {
-      response.end(JSON.stringify({ messages: await messages() }));
+      const payloadMessages = await messages();
+      response.end(JSON.stringify({
+        messages: payloadMessages,
+        lastSyncedAt: mock ? new Date(Date.now() - (2 * 60 * 60 * 1000)).toISOString() : lastSyncedAt,
+        staleAfterDays: Number(settings?.staleAfterDays) >= 0 ? Number(settings.staleAfterDays) : 3
+      }));
     } catch (error) {
       response.statusCode = 500;
       response.end(JSON.stringify({ error: error.message }));
