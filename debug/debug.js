@@ -52,6 +52,14 @@ function renderSyncStatus({ messages, lastSyncedAt, staleAfterDays }) {
   });
 }
 
+function shouldHideMessages(daysWithoutNewMessages, hideMessagesAfterDays) {
+  const threshold = Number(hideMessagesAfterDays);
+  return Number.isFinite(threshold)
+    && threshold >= 0
+    && daysWithoutNewMessages !== null
+    && daysWithoutNewMessages >= threshold;
+}
+
 fetch("/api/messages")
   .then(async (response) => {
     const payload = await response.json();
@@ -60,25 +68,34 @@ fetch("/api/messages")
   })
   .then((payload) => {
     const messages = payload.messages || [];
-    status.remove();
-    messages.forEach((message) => {
-      const item = document.createElement("li");
-      const heading = document.createElement("div");
-      heading.className = "message-heading";
-      const title = document.createElement("span");
-      title.className = "message-title";
-      title.textContent = message.title || message.author || "Parro-bericht";
-      const meta = document.createElement("span");
-      meta.className = "meta";
-      const metaParts = [message.group, message.date && formatDate(message.date)].filter(Boolean);
-      meta.textContent = metaParts.length ? ` · ${metaParts.join(" · ")}` : "";
-      heading.append(title, meta);
-      const body = document.createElement("p");
-      body.className = "message-body";
-      body.textContent = message.body;
-      item.append(heading, body);
-      list.append(item);
-    });
+    const daysWithoutNewMessages = daysSince(messages[0] && messages[0].date);
+    const hideMessages = shouldHideMessages(daysWithoutNewMessages, payload.hideMessagesAfterDays);
+    if (!messages.length || hideMessages) {
+      status.className = "";
+      status.textContent = hideMessages
+        ? `Geen berichten afgelopen ${daysWithoutNewMessages} dagen`
+        : "Geen berichten gevonden";
+    } else {
+      status.remove();
+      messages.forEach((message) => {
+        const item = document.createElement("li");
+        const heading = document.createElement("div");
+        heading.className = "message-heading";
+        const title = document.createElement("span");
+        title.className = "message-title";
+        title.textContent = message.title || message.author || "Parro-bericht";
+        const meta = document.createElement("span");
+        meta.className = "meta";
+        const metaParts = [message.group, message.date && formatDate(message.date)].filter(Boolean);
+        meta.textContent = metaParts.length ? ` · ${metaParts.join(" · ")}` : "";
+        heading.append(title, meta);
+        const body = document.createElement("p");
+        body.className = "message-body";
+        body.textContent = message.body;
+        item.append(heading, body);
+        list.append(item);
+      });
+    }
     renderSyncStatus(payload);
   })
   .catch((error) => {

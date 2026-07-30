@@ -134,6 +134,7 @@ De niet-geheime weergave-instellingen staan in MagicMirror `config.js`:
 | `showGroup` | `true` | Groepsnaam tonen |
 | `showDate` | `true` | Datum tonen |
 | `staleAfterDays` | `3` | Toon vanaf dit aantal dagen de melding `Al x dagen geen nieuwe berichten` |
+| `hideMessagesAfterDays` | `7` | Verberg na dit aantal dagen ook het laatste bericht en toon `Geen berichten afgelopen x dagen` |
 | `showLastSynced` | `true` | Toon onder de lijst wanneer voor het laatst succesvol is gesynchroniseerd |
 
 Browser-, account- en synchronisatie-instellingen staan in `settings.json`:
@@ -145,6 +146,8 @@ Browser-, account- en synchronisatie-instellingen staan in `settings.json`:
 | `authFile` | `.cache/parro-auth.json` | Lokale bearer-token-cache |
 | `syncIntervalMs` | `3600000` | Parro ieder uur synchroniseren |
 | `maximumEntries` | `5` | `3` of `5` berichten in de debugpagina |
+| `staleAfterDays` | `3` | Debugstatus toont vanaf dit aantal dagen `Al x dagen geen nieuwe berichten` |
+| `hideMessagesAfterDays` | `7` | Debug verbergt na dit aantal dagen ook het laatste bericht |
 
 Bij het starten wordt direct gesynchroniseerd; daarna ieder uur. Alle actieve
 groepen en alle pagina's met mededelingen worden opgehaald en gezamenlijk op datum

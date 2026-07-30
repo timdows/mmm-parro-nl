@@ -69,7 +69,8 @@ const server = http.createServer(async (request, response) => {
       response.end(JSON.stringify({
         messages: payloadMessages,
         lastSyncedAt: mock ? new Date(Date.now() - (2 * 60 * 60 * 1000)).toISOString() : lastSyncedAt,
-        staleAfterDays: Number(settings?.staleAfterDays) >= 0 ? Number(settings.staleAfterDays) : 3
+        staleAfterDays: Number(settings?.staleAfterDays) >= 0 ? Number(settings.staleAfterDays) : 3,
+        hideMessagesAfterDays: Number(settings?.hideMessagesAfterDays) >= 0 ? Number(settings.hideMessagesAfterDays) : 7
       }));
     } catch (error) {
       response.statusCode = 500;

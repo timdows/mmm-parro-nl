@@ -11,5 +11,6 @@
   "mediaDownloadDirectory": "downloads/parro-media",
   "syncIntervalMs": 3600000,
   "maximumEntries": 5,
-  "staleAfterDays": 3
+  "staleAfterDays": 3,
+  "hideMessagesAfterDays": 7
 }

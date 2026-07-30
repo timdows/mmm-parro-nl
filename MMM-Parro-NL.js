@@ -10,6 +10,7 @@ Module.register("MMM-Parro-NL", {
     showGroup: true,
     showDate: true,
     staleAfterDays: 3,
+    hideMessagesAfterDays: 7,
     showLastSynced: true
   },
 
@@ -62,6 +63,12 @@ Module.register("MMM-Parro-NL", {
   getDom() {
     const wrapper = document.createElement("div");
     wrapper.className = "parro-wrapper";
+    const daysWithoutNewMessages = this.getDaysWithoutNewMessages();
+    const hideAfterDays = Number(this.config.hideMessagesAfterDays);
+    const hideMessages = Number.isFinite(hideAfterDays)
+      && hideAfterDays >= 0
+      && daysWithoutNewMessages !== null
+      && daysWithoutNewMessages >= hideAfterDays;
 
     if (!this.loaded) {
       wrapper.className += " dimmed light small";
@@ -73,12 +80,14 @@ Module.register("MMM-Parro-NL", {
       wrapper.textContent = this.error;
       return wrapper;
     }
-    if (!this.messages.length) {
+    if (!this.messages.length || hideMessages) {
       const emptyState = document.createElement("div");
       emptyState.className = "dimmed light small";
-      emptyState.textContent = "Geen berichten gevonden";
+      emptyState.textContent = hideMessages
+        ? `Geen berichten afgelopen ${daysWithoutNewMessages} dagen`
+        : "Geen berichten gevonden";
       wrapper.appendChild(emptyState);
-      const status = this.buildStatus();
+      const status = this.buildStatus(daysWithoutNewMessages, { hideMessages });
       if (status) wrapper.appendChild(status);
       return wrapper;
     }
@@ -115,17 +124,15 @@ Module.register("MMM-Parro-NL", {
     });
     wrapper.appendChild(list);
 
-    const status = this.buildStatus();
+    const status = this.buildStatus(daysWithoutNewMessages, { hideMessages: false });
     if (status) wrapper.appendChild(status);
     return wrapper;
   },
 
-  buildStatus() {
+  buildStatus(daysWithoutNewMessages = this.getDaysWithoutNewMessages(), options = {}) {
     const lines = [];
-    const latestMessageDate = this.messages[0] && this.messages[0].date;
     const staleAfterDays = Number(this.config.staleAfterDays);
-    if (Number.isFinite(staleAfterDays) && staleAfterDays >= 0) {
-      const daysWithoutNewMessages = this.daysSince(latestMessageDate);
+    if (!options.hideMessages && Number.isFinite(staleAfterDays) && staleAfterDays >= 0) {
       if (daysWithoutNewMessages !== null && daysWithoutNewMessages >= staleAfterDays) {
         lines.push(`Al ${daysWithoutNewMessages} dagen geen nieuwe berichten`);
       }
@@ -149,6 +156,11 @@ Module.register("MMM-Parro-NL", {
       status.appendChild(lineElement);
     });
     return status;
+  },
+
+  getDaysWithoutNewMessages() {
+    const latestMessageDate = this.messages[0] && this.messages[0].date;
+    return this.daysSince(latestMessageDate);
   },
 
   daysSince(value) {
