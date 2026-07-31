@@ -148,7 +148,7 @@ Module.register("MMM-Parro-NL", {
 
     if (!lines.length) return null;
     const status = document.createElement("div");
-    status.className = "parro-status dimmed small";
+    status.className = "parro-status dimmed xsmall";
     lines.forEach((line) => {
       const lineElement = document.createElement("div");
       lineElement.className = "parro-status-line";
